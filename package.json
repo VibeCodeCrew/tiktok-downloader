@@ -14,6 +14,7 @@
     "test:coverage": "vitest run --coverage",
     "typecheck:node": "tsc --project tsconfig.node.json --noEmit",
     "typecheck:web": "tsc --project tsconfig.web.json --noEmit",
+    "build:wpf": "vite build --config vite.web.config.ts",
     "postinstall": "node scripts/download-ytdlp.mjs"
   },
   "dependencies": {
