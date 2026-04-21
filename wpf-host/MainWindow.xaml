@@ -9,6 +9,8 @@
         ResizeMode="CanResize"
         Background="#0F172A">
   <Grid>
+    <!-- Margin set by code-behind: 6px when normal (exposes resize border to Win32),
+         0 when maximized. Background="#0F172A" matches the React app backdrop. -->
     <wv2:WebView2 x:Name="WebView" />
   </Grid>
 </Window>

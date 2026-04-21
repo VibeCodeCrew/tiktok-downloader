@@ -41,7 +41,7 @@ public class AppBridge
                 break;
 
             case "windowDrag":
-                // drag is now handled natively via WM_NCHITTEST — no-op
+                _window.StartWindowDrag();
                 break;
 
             case "selectDirectory":
