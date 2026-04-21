@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -17,6 +18,9 @@ public partial class MainWindow : Window
     private const int WM_NCLBUTTONDOWN = 0x00A1;
     private const int HTCAPTION        = 2;
 
+    // Prefix for all embedded wwwroot resources
+    private const string ResPrefix = "TikTokDownloader.wwwroot.";
+
     public MainWindow()
     {
         InitializeComponent();
@@ -27,10 +31,10 @@ public partial class MainWindow : Window
     {
         await WebView.EnsureCoreWebView2Async();
 
-        // Serve wwwroot as virtual HTTPS host to avoid file:// restrictions
-        var wwwroot = System.IO.Path.Combine(AppContext.BaseDirectory, "wwwroot");
-        WebView.CoreWebView2.SetVirtualHostNameToFolderMapping(
-            "app.local", wwwroot, CoreWebView2HostResourceAccessKind.Allow);
+        // Intercept every request to https://app.local/* and serve from embedded resources
+        WebView.CoreWebView2.AddWebResourceRequestedFilter(
+            "https://app.local/*", CoreWebView2WebResourceContext.All);
+        WebView.CoreWebView2.WebResourceRequested += OnWebResourceRequested;
 
         // Inject bridge before any page script runs
         await WebView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(BridgeScript);
@@ -41,6 +45,46 @@ public partial class MainWindow : Window
 
         WebView.Source = new Uri("https://app.local/index.html");
     }
+
+    private void OnWebResourceRequested(object? sender, CoreWebView2WebResourceRequestedEventArgs e)
+    {
+        // https://app.local/assets/index-xxx.js  →  TikTokDownloader.wwwroot.assets.index-xxx.js
+        var uri      = e.Request.Uri;
+        var path     = uri.Replace("https://app.local/", "").TrimStart('/');
+        if (string.IsNullOrEmpty(path)) path = "index.html";
+
+        // Directory separators become dots in resource names
+        var resourceName = ResPrefix + path.Replace('/', '.').Replace('\\', '.');
+
+        var asm    = Assembly.GetExecutingAssembly();
+        var stream = asm.GetManifestResourceStream(resourceName);
+        if (stream is null)
+        {
+            e.Response = WebView.CoreWebView2.Environment.CreateWebResourceResponse(
+                null, 404, "Not Found", "");
+            return;
+        }
+
+        var mime = GetMimeType(path);
+        e.Response = WebView.CoreWebView2.Environment.CreateWebResourceResponse(
+            stream, 200, "OK", $"Content-Type: {mime}\r\nAccess-Control-Allow-Origin: *");
+    }
+
+    private static string GetMimeType(string path) =>
+        Path.GetExtension(path).ToLowerInvariant() switch
+        {
+            ".html"          => "text/html; charset=utf-8",
+            ".js"            => "application/javascript",
+            ".css"           => "text/css",
+            ".json"          => "application/json",
+            ".png"           => "image/png",
+            ".jpg" or ".jpeg"=> "image/jpeg",
+            ".svg"           => "image/svg+xml",
+            ".ico"           => "image/x-icon",
+            ".woff"          => "font/woff",
+            ".woff2"         => "font/woff2",
+            _                => "application/octet-stream",
+        };
 
     // Called by AppBridge to push a JSON message to the renderer
     public void PostToWebView(string json)

@@ -16,10 +16,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- wwwroot is populated by `npm run build:wpf` — copy to output -->
-    <Content Include="wwwroot\**\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <!-- wwwroot is populated by `npm run build:wpf`.
+         Files are embedded into the exe — no loose files at runtime. -->
+    <EmbeddedResource Include="wwwroot\**\*" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <!-- Single-file self-contained publish settings -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <!-- Bundle native WPF/WebView2 DLLs into the exe (extracted to temp on first run) -->
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+  </PropertyGroup>
 
 </Project>
