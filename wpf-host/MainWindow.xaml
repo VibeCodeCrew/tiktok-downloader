@@ -6,14 +6,9 @@
         Width="1100" Height="720"
         MinWidth="800" MinHeight="500"
         WindowStyle="None"
-        ResizeMode="CanResizeWithGrip"
+        ResizeMode="CanResize"
         Background="#0F172A">
   <Grid>
     <wv2:WebView2 x:Name="WebView" />
-    <!-- Resize grip overlay (bottom-right corner) -->
-    <ResizeGrip Width="16" Height="16"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Opacity="0" />
   </Grid>
 </Window>
