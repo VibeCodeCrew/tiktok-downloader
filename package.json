@@ -1,0 +1,45 @@
+{
+  "name": "tiktok-downloader",
+  "version": "1.0.0",
+  "description": "Modern TikTok video & audio downloader desktop application",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "package": "npm run build && electron-builder",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "typecheck:node": "tsc --project tsconfig.node.json --noEmit",
+    "typecheck:web": "tsc --project tsconfig.web.json --noEmit",
+    "postinstall": "node scripts/download-ytdlp.mjs"
+  },
+  "dependencies": {
+    "@electron-toolkit/utils": "^3.0.0",
+    "youtube-dl-exec": "^3.0.11"
+  },
+  "devDependencies": {
+    "@electron-toolkit/preload": "^3.0.0",
+    "@electron-toolkit/tsconfig": "^1.0.1",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^20.14.8",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/coverage-v8": "^1.6.0",
+    "autoprefixer": "^10.4.19",
+    "electron": "^31.0.1",
+    "electron-builder": "^24.13.3",
+    "electron-vite": "^2.3.0",
+    "jsdom": "^24.1.0",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.5.2",
+    "vite": "^5.3.2",
+    "vitest": "^1.6.0"
+  }
+}

@@ -1,0 +1,48 @@
+appId: com.tiktokdownloader.app
+productName: TikTok Downloader
+copyright: Copyright © 2024
+
+directories:
+  buildResources: build
+  output: dist
+
+files:
+  - out/**/*
+  - '!**/*.map'
+  - '!**/node_modules/**'
+
+extraResources:
+  - from: node_modules/youtube-dl-exec/bin/
+    to: bin
+    filter:
+      - yt-dlp
+      - yt-dlp.exe
+      - yt-dlp_macos
+
+win:
+  executableName: TikTokDownloader
+  target:
+    - target: nsis
+      arch: [x64]
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+
+mac:
+  entitlementsInherit: build/entitlements.mac.plist
+  extendInfo:
+    NSCameraUsageDescription: Application requests access to the device's camera.
+    NSMicrophoneUsageDescription: Application requests access to the device's microphone.
+    NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+    NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+  category: Utility
